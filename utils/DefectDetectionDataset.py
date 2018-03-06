@@ -3,23 +3,23 @@ import os
 
 import chainer
 from chainercv import utils
+from chainercv import transforms
 
 root = '/home/wei/Data/Loop_detection/'
 
-def get_dir():
-    return root
+
 
 class DefectDetectionDataset(chainer.dataset.DatasetMixin):
     """Base class for defect defection dataset
     """
 
-    def __init__(self, data_dir='auto'):
+    def __init__(self, data_dir='auto', split='', img_size=1024, resize=False):
         if data_dir == 'auto':
-            data_dir = get_dir()
-
+            data_dir = root
         self.data_dir = data_dir
-        images_file = os.path.join(self.data_dir, 'images.txt')
-
+        self.img_size = img_size
+        self.resize = resize
+        images_file = os.path.join(self.data_dir, '{}images.txt'.format(split))
         self.images = [
             line.strip() for line in open(images_file)]
 
@@ -41,7 +41,6 @@ class DefectDetectionDataset(chainer.dataset.DatasetMixin):
         img = utils.read_image(
             os.path.join(self.data_dir, 'images', self.images[i]),
             color=True)
-        
         # bbs should be a matrix (m by 4). m is the number of bounding
         # boxes in the image
         # labels should be an integer array (m by 1). m is the same as the bbs
@@ -49,6 +48,11 @@ class DefectDetectionDataset(chainer.dataset.DatasetMixin):
         bbs_file = os.path.join(self.data_dir, 'bounding_boxes', self.images[i][0:-4]+'.txt')
         
         bbs = np.stack([line.strip().split() for line in open(bbs_file)]).astype(np.float32)
-        label = np.stack([1]*bbs.shape[0]).astype(np.int32)
+        label = np.stack([0]*bbs.shape[0]).astype(np.int32)
+
+        _, H, W = img.shape
+        if self.resize and (H != self.img_size or W != self.img_size):
+            img = transforms.resize(img, (self.img_size, self.img_size))
+            bbs = transforms.resize_bbox(bbs, (H, W), (self.img_size, self.img_size))
 
         return img, bbs, label
