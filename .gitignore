@@ -1,4 +1,7 @@
 .idea/*
 .ipynb_checkpoints/*
 data
-./result/*.npz
+result/*.npz
+result/log
+utils/__*
+utils/.*
