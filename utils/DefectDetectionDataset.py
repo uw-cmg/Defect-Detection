@@ -32,7 +32,7 @@ class DefectDetectionDataset(chainer.dataset.DatasetMixin):
         Args:
             i (int): The index of the example.
 
-        Returns:s
+        Returns:
             tuple of an image and its label.
             The image is in CHW format and its color channel is ordered in
             RGB.
