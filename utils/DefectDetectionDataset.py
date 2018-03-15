@@ -8,7 +8,6 @@ from chainercv import transforms
 root = '/home/wei/Data/Loop_detection/'
 
 
-
 class DefectDetectionDataset(chainer.dataset.DatasetMixin):
     """Base class for defect defection dataset
     """
