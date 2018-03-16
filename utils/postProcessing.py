@@ -94,6 +94,6 @@ def img_ellipse_fitting(img, bboxes):
         y_points = np.concatenate((y_points,rr))
         x_points = np.concatenate((x_points,cc))
     plt.imshow(img[1,:,:], cmap='gray')
-    plt.plot(x_points,y_points,'.')
+    plt.plot(x_points,y_points,'.', size=5,alpha=0.8)
 
 
