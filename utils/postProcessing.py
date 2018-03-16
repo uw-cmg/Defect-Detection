@@ -1,7 +1,7 @@
 from .imageUtils import cropImage
-from skimage import exposure, morphology
+from skimage import exposure, morphology, measure, draw
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 
 def watershed_image(img):
@@ -53,5 +53,20 @@ def flood_fitting(img):
     Use watershed flooding algorithm and regional property analysis
     to output the fitted ellipse parameters
     :param img: (numpy.ndarray) image in CHW format
-    :return:
+    :return: region property, where property can be accessed through attributes
+            example:
+            area, bbox, centroid, major_axis_length, minor_axis_length, orientation
     """
+    labels = watershed_image(img)
+    results = measure.regionprops(labels - 1)
+    sorted(results, key=lambda k: k['area'],reverse=True)
+    # return the one with largest area
+    return results[0]
+
+def show_fitted_ellipse(img):
+    region1 = flood_fitting(img)
+    rr, cc = draw.ellipse_perimeter(int(region1['centroid'][0]), int(region1['centroid'][1]),
+                                    int(region1['minor_axis_length'] / 2),
+                                    int(region1['major_axis_length'] / 2), -region1['orientation'], labels.shape)
+    plt.imshow(subim_gray, cmap='gray')
+    plt.plot(cc, rr, '.')
