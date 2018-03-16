@@ -93,8 +93,8 @@ def img_ellipse_fitting(img, bboxes):
         rr,cc = draw.ellipse_perimeter(*result)
         y_points = np.concatenate((y_points,rr))
         x_points = np.concatenate((x_points,cc))
-    fig = plt.figure()
+    fig = plt.figure(figsize=(10,10))
     plt.imshow(img[1,:,:], cmap='gray')
-    plt.scatter(cc,rr,s=(5*72./fig.dpi)**2,alpha=0.5)
+    plt.scatter(x_points,y_points,s=(5*72./fig.dpi)**2,alpha=0.5)
 
 
