@@ -67,6 +67,6 @@ def show_fitted_ellipse(img):
     region1 = flood_fitting(img)
     rr, cc = draw.ellipse_perimeter(int(region1['centroid'][0]), int(region1['centroid'][1]),
                                     int(region1['minor_axis_length'] / 2),
-                                    int(region1['major_axis_length'] / 2), -region1['orientation'], img.shape)
-    plt.imshow(img, cmap='gray')
+                                    int(region1['major_axis_length'] / 2), -region1['orientation'], img.shape[1:])
+    plt.imshow(img[1,:,:], cmap='gray')
     plt.plot(cc, rr, '.')
