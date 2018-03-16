@@ -27,7 +27,7 @@ def cropImage(img, bboxes, expand=True):
     for bbox in bboxes:
         bbox = bbox.astype(np.int)
         subimages.append(img[:, bbox[0]:bbox[2]+1, bbox[1]:bbox[3]+1])
-    return subimages
+    return subimages, bboxes
 
 
 def expand_bbox(bbox, H, W):

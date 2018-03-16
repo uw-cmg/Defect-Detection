@@ -82,7 +82,7 @@ def show_fitted_ellipse(img):
 
 
 def img_ellipse_fitting(img, bboxes):
-    subimages = cropImage(img, bboxes)
+    subimages, bboxes = cropImage(img, bboxes)
     y_points = np.array([])
     x_points = np.array([])
     for subim, bbox in zip(subimages, bboxes):
@@ -95,6 +95,6 @@ def img_ellipse_fitting(img, bboxes):
         x_points = np.concatenate((x_points,cc))
     fig = plt.figure(figsize=(10,10))
     plt.imshow(img[1,:,:], cmap='gray')
-    plt.scatter(x_points,y_points,s=(5*72./fig.dpi)**2,alpha=0.5)
+    plt.scatter(x_points,y_points,s=(1*72./fig.dpi)**2,alpha=0.5)
 
 
