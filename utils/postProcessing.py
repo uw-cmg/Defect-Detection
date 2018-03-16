@@ -68,9 +68,32 @@ def flood_fitting(img):
     return results[0]
 
 def show_fitted_ellipse(img):
+    """
+    Show fitted ellipse on the image
+    :param img: img in CHW format
+    :return: plot ellipse on top of the image
+    """
     region1 = flood_fitting(img)
     rr, cc = draw.ellipse_perimeter(int(region1['centroid'][0]), int(region1['centroid'][1]),
                                     int(region1['minor_axis_length'] / 2),
                                     int(region1['major_axis_length'] / 2), -region1['orientation'], img.shape[1:])
     plt.imshow(img[1,:,:], cmap='gray')
     plt.plot(cc, rr, '.')
+
+
+def img_ellipse_fitting(img, bboxes):
+    subimages = cropImage(img, bboxes)
+    y_points = list()
+    x_points = list()
+    for subim, bbox in zip(subimages, bboxes):
+        region1 = flood_fitting(subim)
+        result = (int(region1['centroid'][0]+bbox[0]), int(region1['centroid'][1]+bbox[1]),
+                  int(region1['minor_axis_length'] / 2), int(region1['major_axis_length'] / 2),
+                  -region1['orientation'])
+        rr,cc = draw.ellipse_perimeter(*result)
+        y_points += rr
+        x_points += cc
+    plt.imshow(img[1,:,:], cmap='gray')
+    plt.plot(x_points,y_points,'.')
+
+
