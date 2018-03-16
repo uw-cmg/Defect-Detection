@@ -28,6 +28,10 @@ def watershed_image(img):
     out[0, w - 1] = 1
     out[h - 1, w - 1] = 1
     out = morphology.dilation(out, kernel)
+    out[0, :] = 1
+    out[h - 1, :] = 1
+    out[:, w - 1] = 1
+    out[:, 0] = 1
 
     markers = np.zeros((h, w), np.int)
     markers[inner] = 2
