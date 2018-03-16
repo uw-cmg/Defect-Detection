@@ -83,16 +83,16 @@ def show_fitted_ellipse(img):
 
 def img_ellipse_fitting(img, bboxes):
     subimages = cropImage(img, bboxes)
-    y_points = list()
-    x_points = list()
+    y_points = np.array([])
+    x_points = np.array([])
     for subim, bbox in zip(subimages, bboxes):
         region1 = flood_fitting(subim)
         result = (int(region1['centroid'][0]+bbox[0]), int(region1['centroid'][1]+bbox[1]),
                   int(region1['minor_axis_length'] / 2), int(region1['major_axis_length'] / 2),
                   -region1['orientation'])
         rr,cc = draw.ellipse_perimeter(*result)
-        y_points += rr
-        x_points += cc
+        y_points = np.concatenate((y_points,rr))
+        x_points = np.concatenate((x_points,cc))
     plt.imshow(img[1,:,:], cmap='gray')
     plt.plot(x_points,y_points,'.')
 
