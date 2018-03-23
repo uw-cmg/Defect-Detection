@@ -17,9 +17,9 @@ Python version >= 3.5
 
 ## Installation
 Install miniconda (or Anaconda) for python 3
-```wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh```
 
 ```
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 bash miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 conda config --set always_yes yes --set changeps1 no
@@ -36,6 +36,10 @@ Install ChainerCV
 ```
 pip install -e .
 ```
+Install scikit-images
+```
+conda install scikit-image
+```
 Download the defect detection code package and go to the directory of defect detection
 ```
 cd ..
@@ -44,7 +48,7 @@ cd defect-detection
 ```
 ## Usage
 ### Data
-Download data at [Here](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0)
+Download data at [Here](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0). Remember the ```PATH``` of the data root directory.
 
 ### Train
 To train the model on the dataset, run
