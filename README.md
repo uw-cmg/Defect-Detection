@@ -36,6 +36,14 @@ Install ChainerCV
 ```
 pip install -e .
 ```
+Install Chainer (Only if you need to train the model)
+```
+pip install -U setuptools
+pip install chainer
+```
+>>> Enable CUDA/cuDNN support
+>>> In order to enable CUDA support, you have to install CuPy manually. If you also want to use cuDNN, you have to install CuPy with cuDNN support. See CuPy’s installation guide to install CuPy. Once CuPy is correctly set up, Chainer will automatically enable CUDA support.
+
 Install scikit-images
 ```
 conda install scikit-image
