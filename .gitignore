@@ -6,3 +6,4 @@ result/*.npz
 result/log
 utils/__*
 utils/.*
+local_result

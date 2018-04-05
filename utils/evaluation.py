@@ -16,14 +16,14 @@ def bbox2centroid(bboxes):
     return np.column_stack(((bboxes[:, 0] + bboxes[:, 2])/2, (bboxes[:, 1] + bboxes[:, 3])/2))
 
 
-def evaluate_set_by_centroid(model, dataset, threshold = 0.6, use_gpu=True):
-    model.score_thresh = 0.6
+def evaluate_set_by_centroid(model, dataset, threshold=0.5, use_gpu=True):
+    model.score_thresh = threshold
     recall_list = []
     precision_list = []
     for instance in dataset:
         img, gt_bbox, _ = instance
         pred_bbox, _, _ = model.predict([img])
-        recall, precision = compute_score_by_centroid(pred_bbox, gt_bbox)
+        recall, precision = compute_score_by_centroid(pred_bbox[0], gt_bbox)
         recall_list.append(recall)
         precision_list.append(precision)
     return recall_list, precision_list
