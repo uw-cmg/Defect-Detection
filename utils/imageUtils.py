@@ -58,3 +58,12 @@ def showImage(img):
 
     """
     plt.imshow(img.transpose((1, 2, 0))[:, :, 0], cmap='gray')
+
+
+def get_bbox_sz(bbox):
+    """
+    return the size of the bounding boxes
+    :param bbox: numpy.ndarray bounding box N by 4
+    :return: numpy.ndarray bounding box size, (width+length)/2
+    """
+    return (bbox[:, 2]+bbox[:, 3] - bbox[:, 0] - bbox[:, 1]) / 2

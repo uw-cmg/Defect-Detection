@@ -37,6 +37,8 @@ class Transform(object):
 
 
 def main():
+    bbox_label_names = ('loop')
+
     n_itrs = 70000
     n_step = 50000
     np.random.seed(0)
@@ -60,11 +62,11 @@ def main():
     trainer = training.Trainer(
         updater, (n_itrs, 'iteration'), out='result')
     trainer.extend(
-        extensions.snapshot_object(model.faster_rcnn, 'snapshot_model_{}.npz'.format(updater.iteration)),
+        extensions.snapshot_object(model.faster_rcnn, 'snapshot_model_{.updater.iteration}.npz'), 
         trigger=(n_itrs/10, 'iteration'))
     trainer.extend(extensions.ExponentialShift('lr', 0.1),
                    trigger=(n_step, 'iteration'))
-    log_interval = 20, 'iteration'
+    log_interval = 50, 'iteration'
     plot_interval = 100, 'iteration'
     print_interval = 20, 'iteration'
     trainer.extend(chainer.training.extensions.observe_lr(),
@@ -91,9 +93,9 @@ def main():
     trainer.extend(
         DetectionVOCEvaluator(
             test_iter, model.faster_rcnn, use_07_metric=True,
-            label_names=voc_bbox_label_names),
+            label_names=bbox_label_names),
         trigger=ManualScheduleTrigger(
-            [100, 500, 1000, 10000, n_step, n_itrs], 'iteration'))
+            [100, 500, 1000, 5000, 10000, 20000, 40000, n_step, n_itrs], 'iteration'))
 
     trainer.extend(extensions.dump_graph('main/loss'))
 
