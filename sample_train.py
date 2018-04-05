@@ -40,8 +40,8 @@ def main():
     n_itrs = 70000
     n_step = 50000
     np.random.seed(0)
-    train_data = DefectDetectionDataset.DefectDetectionDataset(split='train')
-    test_data = DefectDetectionDataset.DefectDetectionDataset(split='test')
+    train_data = DefectDetectionDataset(split='train')
+    test_data = DefectDetectionDataset(split='test')
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet')
     faster_rcnn.use_preset('evaluate')
     model = FasterRCNNTrainChain(faster_rcnn)
