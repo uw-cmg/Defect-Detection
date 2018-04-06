@@ -67,3 +67,4 @@ def get_bbox_sz(bbox):
     :return: numpy.ndarray bounding box size, (width+length)/2
     """
     return (bbox[:, 2]+bbox[:, 3] - bbox[:, 0] - bbox[:, 1]) / 2
+

@@ -5,13 +5,12 @@ from chainer.datasets import TransformDataset
 from chainer import training
 from chainer.training import extensions
 from chainer.training.triggers import ManualScheduleTrigger
-
-from chainercv.datasets import voc_bbox_label_names
 from chainercv.extensions import DetectionVOCEvaluator
 from chainercv.links import FasterRCNNVGG16
 from chainercv.links.model.faster_rcnn import FasterRCNNTrainChain
 from chainercv import transforms
 from utils import DefectDetectionDataset
+from utils import rotate_bbox, random_resize
 
 
 class Transform(object):
@@ -24,14 +23,24 @@ class Transform(object):
         _, H, W = img.shape
         img = self.faster_rcnn.prepare(img)
         _, o_H, o_W = img.shape
-        scale = o_H / H
         bbox = transforms.resize_bbox(bbox, (H, W), (o_H, o_W))
 
-        # horizontally flip
+        # horizontally & vertical flip
         img, params = transforms.random_flip(
-            img, x_random=True, return_param=True)
+            img, x_random=True, y_random=True, return_param=True)
         bbox = transforms.flip_bbox(
-            bbox, (o_H, o_W), x_flip=params['x_flip'])
+            bbox, (o_H, o_W), x_flip=params['x_flip'], y_flip=params['y_flip'])
+
+        # # rotate
+        # img, params = transforms.random_rotate(img, return_param=True)
+        # _, t_H, t_W = img.shape
+        # bbox = rotate_bbox(bbox, (t_H, t_W), params['k'])
+
+        # # random resize
+        # img = random_resize(img)
+        # _, n_H, n_W = img.shape
+        # bbox = transforms.resize_bbox(bbox, (H, W), (n_H, n_W))
+        scale = o_H / H
 
         return img, bbox, label, scale
 
@@ -44,7 +53,8 @@ def main():
     np.random.seed(0)
     train_data = DefectDetectionDataset(split='train')
     test_data = DefectDetectionDataset(split='test')
-    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='result/snapshot_model_loop_v2.npz')
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='result/snapshot_model_loop_v3.npz',
+                                  min_size=512, max_size=1024)
     faster_rcnn.use_preset('evaluate')
     model = FasterRCNNTrainChain(faster_rcnn)
     chainer.cuda.get_device_from_id(0).use()

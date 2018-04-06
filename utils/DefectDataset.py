@@ -1,9 +1,10 @@
 import numpy as np
 import os
-
+from skimage import exposure, filters
 import chainer
 from chainercv import utils
 from chainercv import transforms
+import warnings
 
 root = '/home/wei/Data/Loop_detection/'
 
@@ -40,6 +41,14 @@ class DefectDetectionDataset(chainer.dataset.DatasetMixin):
         img = utils.read_image(
             os.path.join(self.data_dir, 'images', self.images[i]),
             color=True)
+        # Add processing to the other two channels
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            img[1, :, :] = exposure.rescale_intensity(exposure.equalize_adapthist(
+                exposure.rescale_intensity(img[1, :, :])), out_range=(0, 255))
+            img[2, :, :] = exposure.rescale_intensity(filters.gaussian(
+                exposure.rescale_intensity(img[2, :, :])), out_range=(0, 255))
+
         # bbs should be a matrix (m by 4). m is the number of bounding
         # boxes in the image
         # labels should be an integer array (m by 1). m is the same as the bbs
