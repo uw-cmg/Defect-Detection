@@ -2,6 +2,7 @@ from .imageUtils import cropImage
 from skimage import exposure, morphology, measure, draw
 import numpy as np
 import matplotlib.pyplot as plt
+import math
 
 
 def watershed_image(img):
@@ -97,4 +98,40 @@ def img_ellipse_fitting(img, bboxes):
     plt.imshow(img[1,:,:], cmap='gray')
     plt.scatter(x_points,y_points,s=(1*72./fig.dpi)**2,alpha=0.5)
 
+def img_ellipse_fitting_area(img, bboxes):
+    subimages, bboxes = cropImage(img, bboxes)
+    #y_points = np.array([])
+    #x_points = np.array([])
+    ellipse_info_list = list()
+    for subim, bbox in zip(subimages, bboxes):
+        region1 = flood_fitting(subim)
+        result = (int(region1['centroid'][0]+bbox[0]), int(region1['centroid'][1]+bbox[1]),
+                  int(region1['minor_axis_length'] / 2), int(region1['major_axis_length'] / 2),
+                  -region1['orientation'])
+        ellipse_info_list.append(result)
+        #rr,cc = draw.ellipse_perimeter(*result)
+        #y_points = np.concatenate((y_points,rr))
+        #x_points = np.concatenate((x_points,cc))
+    '''
+    for item in enumerate(ellipse_info_list):
+        #print(item)
+        print("ellipse ",item[0] ,"minor axis ", item[1][1] ," major axis",item[1][2])
+    '''
+    area = list()
+    for item in enumerate(ellipse_info_list):
+        area.append(math.pi * item[1][1] * item[1][2])
+    # the histogram of the data
 
+    plt.hist(area, bins=50)
+
+    plt.xlabel('Area of ellipse')
+    plt.ylabel('Frequency')
+    plt.title(r'$\mathrm{Distribution\  of\  Ellipse\ Area}$')
+    #plt.axis([40, 160, 0, 0.03])
+    #plt.grid(True)
+    fig = plt.figure(figsize=(10, 10))
+    plt.show()
+
+    #plt.imshow(img[1,:,:], cmap='gray')
+    #print(x_points)
+    #plt.scatter(x_points,y_points,s=(1*72./fig.dpi)**2,alpha=0.5)
