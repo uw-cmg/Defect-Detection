@@ -44,7 +44,7 @@ def main():
     np.random.seed(0)
     train_data = DefectDetectionDataset(split='train')
     test_data = DefectDetectionDataset(split='test')
-    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet')
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='result/snapshot_model_loop_v2.npz')
     faster_rcnn.use_preset('evaluate')
     model = FasterRCNNTrainChain(faster_rcnn)
     chainer.cuda.get_device_from_id(0).use()
