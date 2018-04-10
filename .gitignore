@@ -8,3 +8,5 @@ utils/__*
 utils/.*
 local_result
 Defect detection debug Mingren.ipynb
+models
+

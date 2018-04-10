@@ -10,8 +10,9 @@ from chainercv.links import FasterRCNNVGG16
 from chainercv.links.model.faster_rcnn import FasterRCNNTrainChain
 from chainercv import transforms
 from utils import DefectDetectionDataset
-from utils import rotate_bbox, random_resize
-
+from utils import rotate_bbox, random_resize, random_distort, random_crop_with_bbox_constraints
+import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 
 class Transform(object):
 
@@ -21,6 +22,28 @@ class Transform(object):
     def __call__(self, in_data):
         img, bbox, label = in_data
         _, H, W = img.shape
+
+        # random brightness and contrast
+        img = random_distort(img)
+
+        # # rotate
+        # img, params = transforms.random_rotate(img, return_param=True)
+        # _, t_H, t_W = img.shape
+        # bbox = rotate_bbox(bbox, (t_H, t_W), params['k'])
+
+        # # Random expansion
+        # if np.random.randint(2):
+        #     img, param = transforms.random_expand(img, return_param=True)
+        #     bbox = transforms.translate_bbox(
+        #         bbox, y_offset=param['y_offset'], x_offset=param['x_offset'])
+
+        # img, param = random_crop_with_bbox_constraints(
+        #     img, bbox, return_param=True)
+        # bbox, param = transforms.crop_bbox(
+        #     bbox, y_slice=param['y_slice'], x_slice=param['x_slice'],
+        #     allow_outside_center=False, return_param=True)
+        # label = label[param['index']]
+
         img = self.faster_rcnn.prepare(img)
         _, o_H, o_W = img.shape
         bbox = transforms.resize_bbox(bbox, (H, W), (o_H, o_W))
@@ -31,15 +54,6 @@ class Transform(object):
         bbox = transforms.flip_bbox(
             bbox, (o_H, o_W), x_flip=params['x_flip'], y_flip=params['y_flip'])
 
-        # # rotate
-        # img, params = transforms.random_rotate(img, return_param=True)
-        # _, t_H, t_W = img.shape
-        # bbox = rotate_bbox(bbox, (t_H, t_W), params['k'])
-
-        # # random resize
-        # img = random_resize(img)
-        # _, n_H, n_W = img.shape
-        # bbox = transforms.resize_bbox(bbox, (H, W), (n_H, n_W))
         scale = o_H / H
 
         return img, bbox, label, scale
@@ -49,12 +63,12 @@ def main():
     bbox_label_names = ('loop')
 
     n_itrs = 70000
-    n_step = 50000
+    n_step = 40000
     np.random.seed(0)
     train_data = DefectDetectionDataset(split='train')
     test_data = DefectDetectionDataset(split='test')
-    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='result/snapshot_model_loop_v3.npz',
-                                  min_size=512, max_size=1024)
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet',
+                                  min_size=512, max_size=1024, proposal_creator_params={'min_size':8})
     faster_rcnn.use_preset('evaluate')
     model = FasterRCNNTrainChain(faster_rcnn)
     chainer.cuda.get_device_from_id(0).use()
@@ -73,7 +87,7 @@ def main():
         updater, (n_itrs, 'iteration'), out='result')
     trainer.extend(
         extensions.snapshot_object(model.faster_rcnn, 'snapshot_model_{.updater.iteration}.npz'), 
-        trigger=(n_itrs/10, 'iteration'))
+        trigger=(n_itrs/5, 'iteration'))
     trainer.extend(extensions.ExponentialShift('lr', 0.1),
                    trigger=(n_step, 'iteration'))
     log_interval = 50, 'iteration'
@@ -105,7 +119,7 @@ def main():
             test_iter, model.faster_rcnn, use_07_metric=True,
             label_names=bbox_label_names),
         trigger=ManualScheduleTrigger(
-            [100, 500, 1000, 5000, 10000, 20000, 40000, n_step, n_itrs], 'iteration'))
+            [100, 500, 1000, 5000, 10000, 20000, 40000, 60000, n_step, n_itrs], 'iteration'))
 
     trainer.extend(extensions.dump_graph('main/loss'))
 
