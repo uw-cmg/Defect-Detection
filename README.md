@@ -36,6 +36,10 @@ Install ChainerCV
 ```
 pip install -e .
 ```
+or
+```
+python setup.py install
+```
 Install Chainer (Only if you need to train the model)
 ```
 pip install -U setuptools
