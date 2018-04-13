@@ -67,7 +67,7 @@ def main():
     np.random.seed(0)
     train_data = DefectDetectionDataset(split='train')
     test_data = DefectDetectionDataset(split='test')
-    proposal_params = {'n_train_post_nms':300, 'n_test_post_nms':300, 'min_size':8}
+    proposal_params = { 'min_size':8}
 
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet',
                                   min_size=512, max_size=1024, proposal_creator_params=proposal_params)
