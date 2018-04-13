@@ -63,12 +63,14 @@ def main():
     bbox_label_names = ('loop')
 
     n_itrs = 70000
-    n_step = 40000
+    n_step = 50000
     np.random.seed(0)
     train_data = DefectDetectionDataset(split='train')
     test_data = DefectDetectionDataset(split='test')
+    proposal_params = {'n_train_post_nms':300, 'n_test_post_nms':300, 'min_size':8}
+
     faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet',
-                                  min_size=512, max_size=1024, proposal_creator_params={'min_size':8})
+                                  min_size=512, max_size=1024, proposal_creator_params=proposal_params)
     faster_rcnn.use_preset('evaluate')
     model = FasterRCNNTrainChain(faster_rcnn)
     chainer.cuda.get_device_from_id(0).use()
