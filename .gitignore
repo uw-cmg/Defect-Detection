@@ -7,6 +7,7 @@ result/log
 utils/__*
 utils/.*
 utils/*.ipynb
+result_local/*
 result_local
 Defect detection debug Mingren.ipynb
 models
