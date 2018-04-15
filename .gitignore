@@ -6,7 +6,10 @@ result/*.npz
 result/log
 utils/__*
 utils/.*
+utils/*.ipynb
 local_result
 Defect detection debug Mingren.ipynb
 models
 chainercv/*
+chainer_*
+chainercv
