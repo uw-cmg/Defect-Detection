@@ -95,7 +95,7 @@ def img_ellipse_fitting(img, bboxes):
         y_points = np.concatenate((y_points,rr))
         x_points = np.concatenate((x_points,cc))
     fig = plt.figure(figsize=(10,10))
-    plt.imshow(img[1,:,:], cmap='gray')
+    plt.imshow(img[0,:,:], cmap='gray')
     plt.scatter(x_points,y_points,s=(1*72./fig.dpi)**2,alpha=0.5)
 
 def img_ellipse_fitting_area(img, bboxes):

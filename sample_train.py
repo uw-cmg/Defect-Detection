@@ -69,7 +69,7 @@ def main():
     test_data = DefectDetectionDataset(split='test')
     proposal_params = {'min_size': 8}
 
-    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='imagenet', ratios=[0.5, 1, 2],
+    faster_rcnn = FasterRCNNVGG16(n_fg_class=1, pretrained_model='result/snapshot_model_0413.npz', ratios=[0.5, 1, 2],
                                   anchor_scales=[1, 4, 8, 16], min_size=512, max_size=1024,
                                   proposal_creator_params=proposal_params)
     faster_rcnn.use_preset('evaluate')

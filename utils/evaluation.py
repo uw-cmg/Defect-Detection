@@ -1,5 +1,6 @@
 import numpy as np
 from .imageUtils import get_bbox_sz
+from .postProcessing import img_ellipse_fitting
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -31,6 +32,13 @@ def evaluate_set_by_centroid(model, dataset, threshold=0.5, use_gpu=True):
         recall_list.append(recall)
         precision_list.append(precision)
     return recall_list, precision_list
+
+def analyze_and_fitting(model, dataset, threshold=0.5, use_gpu=True):
+    model.score_thresh = threshold
+    for instance in dataset:
+        img, gt_bbox, _ = instance
+        pred_bbox, _, _ = model.predict([img])
+        img_ellipse_fitting(img, pred_bbox[0])
 
 
 def evaluate_set_by_defect_size(model, dataset, threshold=0.5, num_bins=20, size_range=(20, 120), use_gpu=True):
