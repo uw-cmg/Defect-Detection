@@ -33,25 +33,27 @@ class Transform(object):
         
         # Random expansion
         if np.random.randint(2):
-            img, param = transforms.random_expand(img, max_ratio=2, return_param=True)
+            fill_value = img.mean(axis=1).mean(axis=1).reshape(-1,1,1)
+            img, param = transforms.random_expand(img, max_ratio=2, fill=fill_value, return_param=True)
             bbox = transforms.translate_bbox(
                 bbox, y_offset=param['y_offset'], x_offset=param['x_offset'])
 
         # Random crop
         img, param = random_crop_with_bbox_constraints(
-            img, bbox, return_param=True)        
+            img, bbox, min_scale=0.5, max_aspect_ratio=1.5, return_param=True)        
         bbox, param = transforms.crop_bbox(
             bbox, y_slice=param['y_slice'], x_slice=param['x_slice'],
             allow_outside_center=False, return_param=True)
         label = label[param['index']]
         
+        if bbox.shape[0] == 0:
+            img, bbox, label = in_data
+            
         _, t_H, t_W = img.shape
 
         img = self.faster_rcnn.prepare(img)
         _, o_H, o_W = img.shape
         bbox = transforms.resize_bbox(bbox, (t_H, t_W), (o_H, o_W))
-        
-
 
         # horizontally & vertical flip
         img, params = transforms.random_flip(

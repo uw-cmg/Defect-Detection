@@ -218,7 +218,7 @@ def random_crop_with_bbox_constraints(
                 crop_t, crop_l, crop_t + crop_h, crop_l + crop_w))
 
             iou = utils.bbox_iou(bbox, crop_bb[np.newaxis])
-            if min_iou <= iou.min() and iou.max() <= max_iou and iou.sum() > 0.02:
+            if min_iou <= iou.min() and iou.max() <= max_iou and iou.sum() > 0.05:
                 params.append({
                     'constraint': (min_iou, max_iou),
                     'y_slice': slice(crop_t, crop_t + crop_h),
