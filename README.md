@@ -60,11 +60,13 @@ git clone https://github.com/leewaymay/defect-detection.git
 cd defect-detection
 ```
 ## Usage
+
 ### Data
-Download data at [Here](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0). Remember the ```PATH``` of the data root directory.
+Download data at [Here](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0). Remember the ```PATH``` of the data root directory. And use it when you create a dataloader with ```DefectDetectionDataset(data_dir= YOUR_DATA_PATH)```
 
 ### Train
 To train the model on the dataset, run
-```python sample_train.py```
-### On-going Development
-See the ongoing development of the project, see jupyter notebook ```Defect detection debug.ipynb```
+```python train_faster_rCNN.py```
+
+### Tutorial
+See the tutorial of the project, see jupyter notebook ```Defect detection using faster-rCNN tutorial.ipynb```
