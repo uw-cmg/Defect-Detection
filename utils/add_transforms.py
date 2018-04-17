@@ -28,20 +28,10 @@ def rotate_bbox(bbox, size, k):
     if k != 0 and len(p1) > 0:
         new_p1 = rotate_point(p1, origin, k)
         new_p2 = rotate_point(p2, origin, k)
-        if new_p1[1][0] <= new_p2[1][0]:
-            bbox[:, 0] = new_p1[1]
-            bbox[:, 2] = new_p2[1]
-        else:
-            bbox[:, 0] = new_p1[1]
-            bbox[:, 2] = new_p2[1]
-
-        if new_p1[0][0] <= new_p2[0][0]:
-            bbox[:, 1] = new_p1[0]
-            bbox[:, 3] = new_p2[0]
-        else:
-            bbox[:, 1] = new_p1[0]
-            bbox[:, 3] = new_p2[0]
-
+        bbox[:, 0] = np.min([new_p1[1], new_p2[1]],axis=0)
+        bbox[:, 2] = np.max([new_p1[1], new_p2[1]],axis=0)
+        bbox[:, 1] = np.min([new_p1[0], new_p2[0]],axis=0)
+        bbox[:, 3] = np.max([new_p1[0], new_p2[0]],axis=0)
     return bbox
 
 
@@ -61,6 +51,8 @@ def rotate_point(point, origin, k):
     adjusted_y = (y - offset_y)
     cos_rad = [1, 0, -1, 0][k]
     sin_rad = [0, 1, 0, -1][k]
+    if k%2 == 1:
+        offset_x, offset_y = offset_y, offset_x
     qx = offset_x + cos_rad * adjusted_x + sin_rad * adjusted_y
     qy = offset_y + -sin_rad * adjusted_x + cos_rad * adjusted_y
 
@@ -196,10 +188,6 @@ def random_crop_with_bbox_constraints(
     if constraints is None:
         constraints = (
             (0.1, None),
-            (0.3, None),
-            (0.5, None),
-            (0.7, None),
-            (0.9, None),
             (None, 1),
         )
 
@@ -230,7 +218,7 @@ def random_crop_with_bbox_constraints(
                 crop_t, crop_l, crop_t + crop_h, crop_l + crop_w))
 
             iou = utils.bbox_iou(bbox, crop_bb[np.newaxis])
-            if min_iou <= iou.min() and iou.max() <= max_iou:
+            if min_iou <= iou.min() and iou.max() <= max_iou and iou.sum() > 0.02:
                 params.append({
                     'constraint': (min_iou, max_iou),
                     'y_slice': slice(crop_t, crop_t + crop_h),

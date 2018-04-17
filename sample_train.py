@@ -26,27 +26,32 @@ class Transform(object):
         # random brightness and contrast
         img = random_distort(img)
 
-        # # rotate
-        # img, params = transforms.random_rotate(img, return_param=True)
-        # _, t_H, t_W = img.shape
-        # bbox = rotate_bbox(bbox, (t_H, t_W), params['k'])
+        # rotate
+        img, params = transforms.random_rotate(img, return_param=True)
+        _, t_H, t_W = img.shape
+        bbox = rotate_bbox(bbox, (H, W), params['k'])
+        
+        # Random expansion
+        if np.random.randint(2):
+            img, param = transforms.random_expand(img, max_ratio=2, return_param=True)
+            bbox = transforms.translate_bbox(
+                bbox, y_offset=param['y_offset'], x_offset=param['x_offset'])
 
-        # # Random expansion
-        # if np.random.randint(2):
-        #     img, param = transforms.random_expand(img, return_param=True)
-        #     bbox = transforms.translate_bbox(
-        #         bbox, y_offset=param['y_offset'], x_offset=param['x_offset'])
-
-        # img, param = random_crop_with_bbox_constraints(
-        #     img, bbox, return_param=True)
-        # bbox, param = transforms.crop_bbox(
-        #     bbox, y_slice=param['y_slice'], x_slice=param['x_slice'],
-        #     allow_outside_center=False, return_param=True)
-        # label = label[param['index']]
+        # Random crop
+        img, param = random_crop_with_bbox_constraints(
+            img, bbox, return_param=True)        
+        bbox, param = transforms.crop_bbox(
+            bbox, y_slice=param['y_slice'], x_slice=param['x_slice'],
+            allow_outside_center=False, return_param=True)
+        label = label[param['index']]
+        
+        _, t_H, t_W = img.shape
 
         img = self.faster_rcnn.prepare(img)
         _, o_H, o_W = img.shape
-        bbox = transforms.resize_bbox(bbox, (H, W), (o_H, o_W))
+        bbox = transforms.resize_bbox(bbox, (t_H, t_W), (o_H, o_W))
+        
+
 
         # horizontally & vertical flip
         img, params = transforms.random_flip(
@@ -54,7 +59,7 @@ class Transform(object):
         bbox = transforms.flip_bbox(
             bbox, (o_H, o_W), x_flip=params['x_flip'], y_flip=params['y_flip'])
 
-        scale = o_H / H
+        scale = o_H / t_H
 
         return img, bbox, label, scale
 
