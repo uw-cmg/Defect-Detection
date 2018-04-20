@@ -15,10 +15,10 @@ import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
 class Transform(object):
-
+# initial faster_rcnn
     def __init__(self, faster_rcnn):
         self.faster_rcnn = faster_rcnn
-
+# Initial datasets, H, W stores the hight and width of the image
     def __call__(self, in_data):
         img, bbox, label = in_data
         _, H, W = img.shape
@@ -26,12 +26,18 @@ class Transform(object):
         # random brightness and contrast
         img = random_distort(img)
 
-        # rotate
+        # rotate image
+        # return a tuple whose elements are rotated image, param.
+        # k (int in param)represents the number of times the image is rotated by 90 degrees.
         img, params = transforms.random_rotate(img, return_param=True)
+        # restore the new hight and width
         _, t_H, t_W = img.shape
+        # rotate bbox based on renewed parameters
         bbox = rotate_bbox(bbox, (H, W), params['k'])
-        
-        # Random expansion
+
+        # Random expansion:This method randomly place the input image on
+        # a larger canvas. The size of the canvas is (rH,rW), r is a random ratio drawn from [1,max_ratio].
+        # The canvas is filled by a value fill except for the region where the original image is placed.
         if np.random.randint(2):
             fill_value = img.mean(axis=1).mean(axis=1).reshape(-1,1,1)
             img, param = transforms.random_expand(img, max_ratio=2, fill=fill_value, return_param=True)
@@ -39,28 +45,35 @@ class Transform(object):
                 bbox, y_offset=param['y_offset'], x_offset=param['x_offset'])
 
         # Random crop
+        # crops the image with bounding box constraints
         img, param = random_crop_with_bbox_constraints(
-            img, bbox, min_scale=0.5, max_aspect_ratio=1.5, return_param=True)        
+            img, bbox, min_scale=0.5, max_aspect_ratio=1.5, return_param=True)
+        # this translates bounding boxes to fit within the cropped area of an image, bounding boxes whose centers are outside of the cropped area are removed.
         bbox, param = transforms.crop_bbox(
             bbox, y_slice=param['y_slice'], x_slice=param['x_slice'],
             allow_outside_center=False, return_param=True)
+        #assigning new labels to the bounding boxes after cropping
         label = label[param['index']]
-        
+        # if the bounding boxes are all removed,
         if bbox.shape[0] == 0:
             img, bbox, label = in_data
-            
+        # update the height and width of the image
         _, t_H, t_W = img.shape
 
         img = self.faster_rcnn.prepare(img)
+        # prepares the image to match the size of the image to be input into the RCNN
         _, o_H, o_W = img.shape
+        # resize the bounding box according to the image resize
         bbox = transforms.resize_bbox(bbox, (t_H, t_W), (o_H, o_W))
 
         # horizontally & vertical flip
+        # simutaneously flip horizontally and vertically of the image
         img, params = transforms.random_flip(
             img, x_random=True, y_random=True, return_param=True)
+        # flip the bounding box with respect to the parameter
         bbox = transforms.flip_bbox(
             bbox, (o_H, o_W), x_flip=params['x_flip'], y_flip=params['y_flip'])
-
+        
         scale = o_H / t_H
 
         return img, bbox, label, scale
