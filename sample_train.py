@@ -15,10 +15,10 @@ import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
 class Transform(object):
-# initial faster_rcnn
+    # initial faster_rcnn
     def __init__(self, faster_rcnn):
         self.faster_rcnn = faster_rcnn
-# Initial datasets, H, W stores the hight and width of the image
+    # Initial datasets, H, W stores the hight and width of the image
     def __call__(self, in_data):
         img, bbox, label = in_data
         _, H, W = img.shape
