@@ -2,6 +2,7 @@
 .idea_backup/*
 .ipynb_checkpoints/*
 data
+multi_defect_dataset
 result/*.npz
 result/log
 utils/__*
