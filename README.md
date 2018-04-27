@@ -62,7 +62,7 @@ cd defect-detection
 ## Usage
 
 ### Data
-Download data at [Here](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0). Remember the ```PATH``` of the data root directory. And use it when you create a dataloader with ```DefectDetectionDataset(data_dir= YOUR_DATA_PATH)```
+Download data of [LoopDefect](https://www.dropbox.com/sh/ttl5u14uzqxrili/AAAa1XMxP9AVJPQ3ie7xZZVxa?dl=0) and [MultiTypeDefect](https://www.dropbox.com/sh/yioyvrhy0yutwdm/AAA_RG84RphIvNtlEC4q7j1xa?dl=0). Remember the ```PATH``` of the data root directory. And use it when you create a dataloader with ```DefectDetectionDataset(data_dir= YOUR_DATA_PATH)```
 
 ### Train
 To train the model on the dataset, run
