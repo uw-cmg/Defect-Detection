@@ -100,6 +100,6 @@ def vis_bbox(img, bbox, label=None, score=None, label_names=None, ax=None):
         if len(caption) > 0:
             ax.text(bb[1], bb[0],
                     ': '.join(caption),
-                    style='italic',
-                    bbox={'facecolor': 'white', 'alpha': 0.7, 'pad': 5})
+                    style='italic')
+#                     bbox={'facecolor': 'white', 'alpha': 0.7, 'pad': 5})
     return ax
