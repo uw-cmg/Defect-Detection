@@ -120,5 +120,4 @@ class MultiDefectDetectionDataset(chainer.dataset.DatasetMixin):
             img = transforms.resize(img, (self.img_size, self.img_size))
             bbs = transforms.resize_bbox(bbs, (H, W), (self.img_size, self.img_size))
 
-        print(self.images[i])
         return img, bbs, label

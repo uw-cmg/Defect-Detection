@@ -75,7 +75,6 @@ class Transform(object):
             bbox, (o_H, o_W), x_flip=params['x_flip'], y_flip=params['y_flip'])
         
         scale = o_H / t_H
-        
 
         return img, bbox, label, scale
 
